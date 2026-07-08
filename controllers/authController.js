@@ -123,3 +123,32 @@ exports.updateUserProfile = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.changePassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  try {
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Please provide both old and new passwords" });
+    }
+
+    const user = await User.findById(req.user._id);
+
+    const isMatch = await user.matchPassword(oldPassword);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect current password" });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
