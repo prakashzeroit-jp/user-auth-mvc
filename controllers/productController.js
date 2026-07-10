@@ -47,4 +47,27 @@ const getProducts = async (req, res) => {
   }
 };
 
-module.exports = { createProduct ,getProducts};
+const getProductById = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate(
+      "category",
+      "name description",
+    );
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    if (error.kind === "ObjectId") {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+module.exports = { createProduct, getProducts ,getProductById};
