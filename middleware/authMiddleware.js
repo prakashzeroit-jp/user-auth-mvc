@@ -39,4 +39,13 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+const admin = (req, res, next) => {
+  // Change this line to match your exact User model property
+  if (req.user && req.user.isAdmin === true) { 
+    return next();
+  } else {
+    return res.status(403).json({ message: 'Not authorized as an admin' });
+  }
+};
+
+module.exports = { protect ,admin};
