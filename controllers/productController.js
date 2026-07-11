@@ -33,18 +33,22 @@ const createProduct = async (req, res) => {
 
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find({}).populate(
-      "category",
-      "name description",
-    );
+    let query = {};
+    if (req.query.search) {
+      query.name = {
+        $regex: req.query.search, 
+        $options: 'i'              // 'i' for Case-Insensitive (Capital/Small letter both ok)
+      };
+    }
+    const products = await Product.find(query).populate('category', 'name description');
 
     res.status(200).json({
       success: true,
       count: products.length,
-      data: products,
+      data: products
     });
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({ message: 'Server Error', error: error.message });
   }
 };
 
