@@ -68,4 +68,45 @@ const viewCart =  async (req,res)=>{
     }
 }
 
-module.exports = { addToCart,viewCart };
+
+const updateQuantity  = async (req,res)=>{
+    try{
+
+   const  { productId, quantity} =  req.body;
+   const userId =  req.user.id;
+
+//    if(!quantity < 1){
+//       return  res.status(400).json({success : false,message : 'Quentity  cannot be less then 1'});
+//    }
+
+  const cart = await  Cart.findOne({user : userId});
+  if(!cart){
+     return res.status(404).json({success :  false,message : 'Cart not found'});
+  }
+
+  const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
+
+  if(itemIndex > -1){
+     cart.items[itemIndex].quantity = quantity;
+     await  cart.save();
+ 
+     const updatedCart = await cart.populate({
+        path :  'items.product',
+        select :  'name price images stock'
+     });
+
+    return res.status(200).json({
+        success :  true,
+        message :  'Cart updated successfully',
+        data :  updatedCart
+    });
+
+  }else{
+     return  res.status(404).json({success :  false,message : 'Item not found  in  cart'});
+  }
+    }catch(error){
+        res.status(500).json({success :  false,message :  'Internal server error',error : error.message});
+    }
+}
+
+module.exports = { addToCart,viewCart,updateQuantity };
