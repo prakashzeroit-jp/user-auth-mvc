@@ -70,4 +70,35 @@ const getWishlist = async (req, res) => {
   }
 };
 
-module.exports = { addToWishlist ,getWishlist};
+const removeFromWishlist = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { productId } = req.params;
+
+    const wishlist = await Wishlist.findOne({ user: userId });
+    if (!wishlist) {
+      return res.status(404).json({ message: "Wishlist  not found" });
+    }
+
+    wishlist.products = wishlist.products.filter(
+      (id) => id.toString() !== productId,
+    );
+    await wishlist.save();
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Product remove from wishlist",
+        data: wishlist,
+      });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { addToWishlist, getWishlist ,removeFromWishlist};
