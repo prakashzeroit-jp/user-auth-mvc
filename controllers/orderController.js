@@ -64,4 +64,33 @@ const getOrderHistory = async (req, res) => {
   }
 };
 
-module.exports = { placeOrder,getOrderHistory };
+const getOrderDetails = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate("user", "username email")
+      .populate("orderItems.product", "name images");
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not  found" });
+    }
+
+    if (order.user._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorised to  view this order",
+      });
+    }
+
+    res.status(200).json({ success: false, data: order });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal Server error",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { placeOrder, getOrderHistory, getOrderDetails };
