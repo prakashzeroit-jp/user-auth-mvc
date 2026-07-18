@@ -80,4 +80,39 @@ try{
 
 }  
 
-module.exports = { addProductReview ,updateProductReview};
+const deleteProductReview = async (req,res) =>{
+  try{
+   const product = await Product.findById(req.params.id);
+   
+   if(!product){
+     return res.status(404).json({success : false,message : 'Product not  found'});
+   }
+
+    const initialLength = product.reviews.length;
+
+    product.reviews = product.reviews.filter(
+      (r) => r.user.toString() !== req.user._id.toString()
+    );
+
+    if (product.reviews.length === initialLength) {
+      return res.status(404).json({ success: false, message: 'Review not found' });
+    }
+
+    product.numReviews = product.reviews.length;
+
+    if (product.reviews.length > 0) {
+      product.rating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
+    } else {
+      product.rating = 0;
+    }
+
+    await product.save();
+    res.status(200).json({ success: true, message: 'Review deleted successfully', data: product });
+
+  }catch(error){
+   res.status(500).json({success : false,message : 'Internal  server error',error : error.message});
+  }
+
+}
+
+module.exports = { addProductReview ,updateProductReview,deleteProductReview};
