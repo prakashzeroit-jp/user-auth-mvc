@@ -1,819 +1,241 @@
-# 🔐 User Authentication API (MVC)
+# Advanced E-Commerce REST API Backend (MVC Architecture) 🚀
 
-![Node.js](https://img.shields.io/badge/Node.js-20+-green)
-![Express](https://img.shields.io/badge/Express.js-Backend-blue)
-![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
-![JWT](https://img.shields.io/badge/JWT-Authentication-orange)
-![MVC](https://img.shields.io/badge/Architecture-MVC-red)
-![License](https://img.shields.io/badge/License-MIT-blue)
-
-A complete **Node.js Authentication API** built using **MVC (Model View Controller)** Architecture.
-
-The project demonstrates how to build a secure authentication system using Node.js, Express.js, MongoDB, JWT Authentication, Password Hashing, Middleware, and REST APIs.
-
-This project is beginner-friendly and can also serve as a starting template for production-ready backend applications.
+A robust, production-ready, and highly scalable E-Commerce REST API built using **Node.js, Express, and MongoDB (Mongoose)**. This project follows strict industry-standard Model-View-Controller (MVC) decoupling patterns.
 
 ---
 
-# 📌 Features
+## 📂 Complete MVC Directory Structure Breakdown
 
-- User Registration
-- User Login
-- Password Hashing using bcrypt
-- JWT Authentication
-- Protected Routes
-- MongoDB Database
-- MVC Folder Structure
-- Express Router
-- Middleware
-- Environment Variables
-- Error Handling
-- JSON Response
-- REST API
-- Postman Tested
-- Clean Project Structure
+The codebase is organized into cleanly separated logical layers to ensure scalability and ease of maintainability:
 
----
-
-# 🛠 Tech Stack
-
-| Technology | Purpose |
-|------------|----------|
-| Node.js | Backend Runtime |
-| Express.js | Server Framework |
-| MongoDB | Database |
-| Mongoose | MongoDB ODM |
-| JWT | Authentication |
-| bcrypt | Password Hashing |
-| dotenv | Environment Variables |
-| Nodemon | Development |
-
----
-
-# 📁 Project Structure
-
-```
-user-auth-mvc
-│
-├── config
-│     └── db.js
-│
-├── controllers
-│     └── authController.js
-│
-├── middleware
-│     └── authMiddleware.js
-│
-├── models
-│     └── User.js
-│
-├── routes
-│     └── authRoutes.js
-│
-├── .env
-├── app.js
-├── server.js
-├── package.json
-└── README.md
+```text
+user-auth-mvc/
+├── config/
+│   └── db.js                 # Database connection setup using Mongoose instance
+├── controllers/              # Core Business Logic Layer (Processes requests & sends responses)
+│   ├── adminController.js     # System analytics metrics & administration controls
+│   ├── authController.js      # User identity management & security lifecycle logic
+│   ├── categoryController.js  # Inventory organization structural controls
+│   ├── cartController.js      # Active user consumption bucket modifications
+│   ├── productController.js   # Main catalog processing logic
+│   ├── reviewController.js    # Embedded feedback aggregate computation layers
+│   └── wishlistController.js  # Static bookmark parsing indexes
+├── middleware/               # Intermediate Filtering Layer (Request verification)
+│   ├── authMiddleware.js     # Identity token parser & role-permission guard rails
+│   └── uploadMiddleware.js   # File multipart parsing boundary & type interceptor
+├── models/                   # Data Modeling Layer (Defines Database Schema blueprints)
+│   ├── Blacklist.js          # Persistent tracking schema filtering expired tokens
+│   ├── Cart.js               # Multi-item bucket container maps linked to users
+│   ├── Category.js           # Structural catalog organizational definitions
+│   ├── Order.js              # Historical transactional financial logging maps
+│   ├── Product.js            # Unified catalog asset maps with embedded sub-reviews
+│   └── User.js               # Structural user identities with encryption constraints
+├── routes/                   # Routing Configuration Layer (Maps URL Endpoints to Controllers)
+│   ├── adminRoutes.js        # Admin operation command definitions
+│   ├── authRoutes.js         # Security session mapping bindings
+│   ├── cartRoutes.js         # Client shopping container endpoints
+│   ├── categoryRoutes.js     # Directory configuration schema mappings
+│   ├── orderRoutes.js        # Checkout transaction processing endpoints
+│   ├── productRoutes.js      # Core catalog endpoint matrices
+│   └── wishlistRoutes.js     # Bookmark lookup processing routes
+├── uploads/                  # Physical Storage Layer (Destination folder for image assets)
+├── .env                      # Environment Configuration Secrets File (Kept out of Git)
+├── .gitignore                # Declaration manifest files specifying omitted resources
+├── package.json              # Project manifest and lifecycle dependency mapping scripts
+└── server.js                 # Application Entry Point (Bootstraps plugins, routes, & listeners)
 ```
 
 ---
 
-# 🏗 MVC Architecture
+## 🛠️ Global Postman Testing Setup Configuration
 
-MVC stands for
+Before calling any protected resources, make sure you configure your request execution variables in Postman correctly:
 
-```
-Model
-View
-Controller
-```
-
-Since this is a REST API project, there is no frontend (View).
-
-The project mainly uses:
-
-```
-Client
-   │
-   ▼
-Routes
-   │
-   ▼
-Controller
-   │
-   ▼
-Model
-   │
-   ▼
-MongoDB
-```
+1. **Host Server base domain context:** `http://localhost:3000`
+2. **Global Application Content Type Header:** 
+   * Go to **Headers** tab in Postman.
+   * Add: `Content-Type` = `application/json` *(Except for the Multipart Image Upload API)*.
+3. **Session Authentication Web Tokens (JWT):**
+   * Select the **Authorization** tab directly below the URL bar.
+   * Toggle the **Type** option selector dropdown and set it to **`Bearer Token`**.
+   * Paste the clean un-quoted string key generated from the Login API response directly into the text field.
 
 ---
 
-# 📂 Folder Explanation
-
-## config/
-
-Contains database connection logic.
-
-Example:
-
-```
-MongoDB Connection
-```
-
----
-
-## models/
-
-Contains database schema.
-
-Example
-
-```
-User Schema
-
-name
-
-email
-
-password
-```
-
-Mongoose uses this schema to create the User Collection.
-
----
-
-## controllers/
-
-Contains business logic.
-
-Example
-
-```
-Register User
-
-Login User
-
-Generate Token
-
-Return Response
-```
-
-Controllers receive requests from routes and interact with models.
-
----
-
-## routes/
-
-Contains API endpoints.
-
-Example
-
-```
-POST /register
-
-POST /login
-
-GET /profile
-```
-
-Routes only call controllers.
-
-Business logic should never be written here.
-
----
-
-## middleware/
-
-Contains middleware functions.
-
-Example
-
-```
-JWT Verification
-
-Authentication
-
-Authorization
-```
-
-Middleware runs before controller execution.
-
----
-
-## .env
-
-Stores secret variables.
-
-Example
-
-```
-PORT=5000
-
-MONGO_URI=your_mongodb_url
-
-JWT_SECRET=your_secret_key
-```
-
-Never upload `.env` to GitHub.
-
----
-
-# ⚙ Installation
-
-Clone the repository
-
-```
-git clone https://github.com/prakashzeroit-jp/user-auth-mvc.git
-```
-
-Go inside folder
-
-```
-cd user-auth-mvc
-```
-
-Install packages
-
-```
-npm install
-```
-
-Create .env file
-
-```
-PORT=5000
-
-MONGO_URI=your_mongodb_connection
-
-JWT_SECRET=your_secret_key
-```
-
-Run project
-
-```
-npm run dev
-```
-
-or
-
-```
-node server.js
-```
-
----
-
-# 🚀 Server
-
-If everything is configured correctly
-
-```
-Server Running on Port 5000
-
-MongoDB Connected Successfully
-```
-
----
-
-# 🌐 Base URL
-
-```
-http://localhost:5000/api
-```
-
----
-
-# 📬 API Endpoints
-
-## 1️⃣ Register User
-
-### URL
-
-```
-POST /api/register
-```
-
-### Request Body
-
+## 📡 Comprehensive API Endpoint Blueprint & Postman Testing Reference
+
+### 🔐 1. Authentication Module (`/api/auth`)
+
+#### 🔹 Register User Profile
+* **HTTP Method:** `POST`
+* **Endpoint URL:** `http://localhost:3000/api/auth/register`
+* **Body Format:** `raw (JSON)`
+* **JSON Payload Matrix:**
 ```json
 {
-    "name":"John",
-    "email":"john@gmail.com",
-    "password":"123456"
+  "username": "prakashkumar12",
+  "email": "prakash123456@gmail.com",
+  "password": "yoursecurepassword"
 }
 ```
 
-### Success Response
-
+#### 🔹 Login & Generate Access Bearer Web Token
+* **HTTP Method:** `POST`
+* **Endpoint URL:** `http://localhost:3000/api/auth/login`
+* **Body Format:** `raw (JSON)`
+* **JSON Payload Matrix:**
 ```json
 {
-    "success": true,
-    "message": "User Registered Successfully",
-    "data": {
-        "_id": "66578c...",
-        "name": "John",
-        "email": "john@gmail.com"
-    }
+  "email": "prakash123456@gmail.com",
+  "password": "yoursecurepassword"
+}
+```
+*📌 **Postman Check:** Copy the long `token` string value returned upon a successful `200 OK` action to authorize all subsequent protected APIs.*
+
+---
+
+### 🗂️ 2. Categories Module (`/api/categories`)
+
+#### 🔹 Add New Category *(Admin Route)*
+* **HTTP Method:** `POST`
+* **Endpoint URL:** `http://localhost:3000/api/categories`
+* **Authorization:** `Bearer Token` *(Ensure `isAdmin: true` or hardcoded development email match is configured)*
+* **Body Format:** `raw (JSON)`
+* **JSON Payload Matrix:**
+```json
+{
+  "name": "chargers",
+  "description": "High velocity charging equipment adapters"
+}
+```
+
+#### 🔹 View All Categories List *(Public Route)*
+* **HTTP Method:** `GET`
+* **Endpoint URL:** `http://localhost:3000/api/categories`
+* **Authorization:** `No Auth`
+
+---
+
+### 📦 3. Product & Search Module (`/api/products`)
+
+#### 🔹 Add New Product Asset *(Admin Route)*
+* **HTTP Method:** `POST`
+* **Endpoint URL:** `http://localhost:3000/api/products`
+* **Authorization:** `Bearer Token`
+* **Body Format:** `raw (JSON)`
+* **JSON Payload Matrix:**
+```json
+{
+  "name": "Samsung 25W Charger",
+  "description": "Adaptive type-c high velocity fast charging power wall block adapter",
+  "price": 1299,
+  "category": "PASTE_THE_MONGOOSE_CATEGORY_ID_HERE",
+  "stock": 150
+}
+```
+
+#### 🔹 Master Catalog Search & Multi-Filter Query Handler *(Public Route)*
+* **HTTP Method:** `GET`
+* **Endpoint URL Configurations:**
+  * *Test Case A (Get All):* `http://localhost:3000/api/products`
+  * *Test Case B (Name Regular Expressions Match):* `http://localhost:3000/api/products?search=charger`
+  * *Test Case C (Category Pipeline Filtration):* `http://localhost:3000/api/products?category=PASTE_CATEGORY_ID`
+  * *Test Case D (Boundary Price Range Filter & Sorting):* `http://localhost:3000/api/products?minPrice=500&maxPrice=2000&sortBy=priceAsc`
+  * *Test Case E (Offset Index Pagination Controls):* `http://localhost:3000/api/products?page=1&limit=2`
+
+---
+
+### 🖼️ 4. Multipart Image Upload Module (`/api/products/:id/upload`)
+
+#### 🔹 Robust Batch Image Asset Append Process *(Protected Route)*
+* **HTTP Method:** `POST`
+* **Endpoint URL:** `http://localhost:3000/api/products/PASTE_YOUR_PRODUCT_ID_HERE/upload`
+* **Authorization:** `Bearer Token`
+* **Body Format:** **`form-data`** *(⚠️ Uncheck Content-Type Application/JSON headers for this operation)*
+* **Key/Value Configuration Mapping:**
+  * Set **Key** = `images`
+  * Change the Key type dropdown selection from *Text* to **`File`**.
+  * Under **Value**, click *Select Files* and upload 1-5 image files from your computer.
+  * *⚠️ Ensure all empty placeholder rows directly below your active entry inside the Postman table are completely cleared or unchecked.*
+
+---
+
+### 🛒 5. Shopping Cart Module (`/api/cart`)
+
+#### 🔹 Add Item or Increment Quantity
+* **HTTP Method:** `POST`
+* **Endpoint URL:** `http://localhost:3000/api/cart`
+* **Authorization:** `Bearer Token`
+* **Body Format:** `raw (JSON)`
+* **JSON Payload Matrix:**
+```json
+{
+  "productId": "PASTE_YOUR_PRODUCT_ID_HERE",
+  "quantity": 2
+}
+```
+
+#### 🔹 Overwrite Targeted Quantity Constraint
+* **HTTP Method:** `PUT`
+* **Endpoint URL:** `http://localhost:3000/api/cart`
+* **Authorization:** `Bearer Token`
+* **Body Format:** `raw (JSON)`
+* **JSON Payload Matrix:**
+```json
+{
+  "productId": "PASTE_YOUR_PRODUCT_ID_HERE",
+  "quantity": 5
 }
 ```
 
 ---
 
-### Email Already Exists
+### ❤️ 6. Wishlist Module (`/api/wishlist`)
 
+#### 🔹 Add Clean Product to Wishlist *(Sanitized via `.trim()`)*
+* **HTTP Method:** `POST`
+* **Endpoint URL:** `http://localhost:3000/api/wishlist`
+* **Authorization:** `Bearer Token`
+* **Body Format:** `raw (JSON)`
+* **JSON Payload Matrix:**
 ```json
 {
-    "success": false,
-    "message": "Email already exists"
+  "productId": "PASTE_YOUR_PRODUCT_ID_HERE"
 }
 ```
 
 ---
 
-## 2️⃣ Login
+### 💳 7. Order Transaction Module (`/api/orders`)
 
-### URL
-
-```
-POST /api/login
-```
-
-### Request
-
+#### 🔹 Place New Order & Auto-Reset Active Cart Staging List
+* **HTTP Method:** `POST`
+* **Endpoint URL:** `http://localhost:3000/api/orders`
+* **Authorization:** `Bearer Token`
+* **Body Format:** `raw (JSON)`
+* **JSON Payload Matrix:**
 ```json
 {
-    "email":"john@gmail.com",
-    "password":"123456"
+  "shippingAddress": {
+    "address": "456 Corporate Business Complex Park Lane",
+    "city": "Mumbai",
+    "postalCode": "400001",
+    "country": "India"
+  }
 }
 ```
 
----
-
-### Success Response
-
-```json
-{
-    "success": true,
-    "message": "Login Successful",
-    "token":"JWT_TOKEN"
-}
-```
+#### 🔹 Update Order Status to Delivered *(Admin Route)*
+* **HTTP Method:** `PUT`
+* **Endpoint URL:** `http://localhost:3000/api/orders/PASTE_YOUR_ORDER_ID_HERE/deliver`
+* **Authorization:** `Bearer Token`
+* **Body Format:** `none`
 
 ---
 
-### Wrong Password
-
-```json
-{
-    "success": false,
-    "message":"Invalid Credentials"
-}
-```
-
----
-
-## 3️⃣ User Profile
-
-### URL
-
-```
-GET /api/profile
-```
-
-Header
-
-```
-Authorization
-
-Bearer JWT_TOKEN
-```
-
----
-
-### Success Response
-
-```json
-{
-    "success":true,
-    "data":{
-        "_id":"6657...",
-        "name":"John",
-        "email":"john@gmail.com"
-    }
-}
-```
-
----
-
-### Unauthorized
-
-```json
-{
-    "success":false,
-    "message":"Unauthorized Access"
-}
-```
-
----
-
-# 🔑 Authentication Flow
-
-```
-Register
-
-↓
-
-Password Hashing
-
-↓
-
-Store User
-
-↓
-
-Login
-
-↓
-
-Compare Password
-
-↓
-
-Generate JWT
-
-↓
-
-Return Token
-
-↓
-
-Protected API
-
-↓
-
-Verify Token
-
-↓
-
-Access Granted
-```
-
----
-
-# 🔒 Password Hashing
-
-Passwords are never stored as plain text.
-
-Before saving
-
-```
-123456
-```
-
-Stored inside database
-
-```
-$2b$10$E...
-```
-
-This is done using
-
-```
-bcrypt
-```
-
----
-
-# 🔐 JWT Authentication
-
-After login
-
-Server generates
-
-```
-JWT Token
-```
-
-Client stores
-
-```
-Token
-```
-
-Every protected API request
-
-```
-Authorization
-
-Bearer TOKEN
-```
-
-Middleware verifies the token.
-
----
-
-# 📮 Postman Testing
-
-## Register API
-
-Method
-
-```
-POST
-```
-
-URL
-
-```
-http://localhost:5000/api/register
-```
-
-Body
-
-```
-raw
-
-JSON
-```
-
-Paste
-
-```json
-{
-    "name":"John",
-    "email":"john@gmail.com",
-    "password":"123456"
-}
-```
-
-Click
-
-```
-Send
-```
-
----
-
-## Login API
-
-Method
-
-```
-POST
-```
-
-URL
-
-```
-http://localhost:5000/api/login
-```
-
-Paste
-
-```json
-{
-    "email":"john@gmail.com",
-    "password":"123456"
-}
-```
-
-Click Send
-
-Copy
-
-```
-JWT Token
-```
-
----
-
-## Protected API
-
-Method
-
-```
-GET
-```
-
-Go to
-
-Headers
-
-```
-Authorization
-
-Bearer JWT_TOKEN
-```
-
-Click
-
-```
-Send
-```
-
-If token is valid
-
-You will receive profile information.
-
----
-
-# 📊 Request Flow
-
-```
-Client
-
-↓
-
-Route
-
-↓
-
-Controller
-
-↓
-
-Model
-
-↓
-
-MongoDB
-
-↓
-
-Controller
-
-↓
-
-Response
-
-↓
-
-Client
-```
-
----
-
-# 📦 Dependencies
-
-```
-express
-
-mongoose
-
-bcrypt
-
-jsonwebtoken
-
-dotenv
-
-cors
-
-nodemon
-```
-
----
-
-# ❌ Common Errors
-
-## MongoDB Not Connected
-
-Check
-
-```
-MONGO_URI
-```
-
----
-
-## Invalid Token
-
-Generate new login token.
-
----
-
-## JWT Expired
-
-Login again.
-
----
-
-## Email Already Exists
-
-Use another email.
-
----
-
-## Missing Token
-
-Add
-
-```
-Authorization
-
-Bearer TOKEN
-```
-
----
-
-# 📈 Future Improvements
-
-- Email Verification
-- Forgot Password
-- Reset Password
-- OTP Verification
-- Google Authentication
-- Refresh Token
-- Role Based Authentication
-- Admin Dashboard APIs
-- File Upload
-- Swagger Documentation
-- Docker Support
-- Unit Testing
-- API Rate Limiting
-
----
-
-# 🎯 Learning Objectives
-
-This project helps developers understand
-
-- MVC Architecture
-- REST APIs
-- JWT Authentication
-- Password Hashing
-- MongoDB CRUD
-- Express Routing
-- Middleware
-- Environment Variables
-- Authentication Flow
-- Secure Backend Development
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome.
-
-1. Fork Repository
-
-2. Create Branch
-
-```
-git checkout -b feature-name
-```
-
-3. Commit Changes
-
-```
-git commit -m "Added new feature"
-```
-
-4. Push
-
-```
-git push origin feature-name
-```
-
-5. Create Pull Request
-
----
-
-# 👨‍💻 Author
-
-**Jyoti Prakash**
-
-Backend Developer
-
-Node.js | Express.js | MongoDB
-
-GitHub
-
-https://github.com/prakashzeroit-jp
-
----
-
-# ⭐ Support
-
-If you found this project helpful,
-
-⭐ Star this repository
-
-🍴 Fork this repository
-
-📢 Share it with others
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License.
-
----
-
-# ❤️ Thank You
-
-Thank you for visiting this repository.
-
-Happy Coding 🚀
+### 📊 8. Administration Analytical Hub Module (`/api/admin`)
+
+#### 🔹 Aggregate Global Real-Time Sales Metrics
+* **HTTP Method:** `GET`
+* **Endpoint URL:** `http://localhost:3000/api/admin/dashboard-stats`
+* **Authorization:** `Bearer Token` *(Must pass Admin Verification Guard conditions)*
